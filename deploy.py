@@ -26,7 +26,17 @@ endpoint = ManagedOnlineEndpoint(
     auth_mode="key"
 )
 
-ml_client.begin_create_or_update(endpoint).wait()
+from azure.core.exceptions import ResourceNotFoundError
+
+endpoint_name = "rhp-iris-endpoint"
+
+# Delete if exists (including failed state)
+try:
+    print("Deleting existing endpoint if it exists...")
+    ml_client.online_endpoints.begin_delete(endpoint_name).wait()
+    print("Old endpoint deleted.")
+except ResourceNotFoundError:
+    print("No existing endpoint found.")
 
 # Deployment
 deployment = ManagedOnlineDeployment(
