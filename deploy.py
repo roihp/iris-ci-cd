@@ -1,64 +1,61 @@
-import os
-import json
+# deploy.py
+
 from azure.ai.ml import MLClient
+from azure.ai.ml.entities import (
+    ManagedOnlineEndpoint,
+    ManagedOnlineDeployment,
+    Environment,
+    CodeConfiguration
+)
 from azure.identity import DefaultAzureCredential
-from azure.ai.ml.entities import ManagedOnlineEndpoint, ManagedOnlineDeployment
-from azure.ai.ml.entities import Model, Environment, CodeConfiguration
 
-# credential = DefaultAzureCredential()
+import uuid
 
-# Load GitHub secret directly
-creds = json.loads(base64.b64decode(os.environ["AZURE_CREDENTIALS_BASE64"]))
+endpoint_name = "iris-endpoint-" + str(uuid.uuid4())[:8]
+deployment_name = "blue"
 
-credential = ClientSecretCredential(
-    tenant_id=creds["tenantId"],
-    client_id=creds["clientId"],
-    client_secret=creds["clientSecret"]
-)
-
-ml_client = MLClient(
-    credential,
-    "691cbb21-a34e-4990-99a9-4bb74b409c18",
-    "rhp-ml-rg2",
-    "rhp-ml-workspace2",
-)
-
-# Register model
-model = ml_client.models.create_or_update(
-    Model(
-        path="outputs/model.pkl",
-        name="iris-model"
-    )
-)
+credential = DefaultAzureCredential()
+ml_client = MLClient.from_config(credential)
 
 # Create endpoint
 endpoint = ManagedOnlineEndpoint(
-    name="rhp-iris-endpoint",
-    auth_mode="key"
+    name=endpoint_name,
+    auth_mode="key",
 )
 
-ml_client.begin_create_or_update(endpoint).wait()
+ml_client.online_endpoints.begin_create_or_update(endpoint).result()
 
-# Deployment
+# Create environment
+env = Environment(
+    name="iris-env",
+    conda_file="conda.yaml",
+    image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04:latest",
+)
+
+ml_client.environments.create_or_update(env)
+
+# Create deployment
 deployment = ManagedOnlineDeployment(
-    name="blue",
-    endpoint_name="rhp-iris-endpoint",
-    model=model,
-    environment=Environment(
-        conda_file="conda.yaml",
-        image="mcr.microsoft.com/azureml/sklearn-1.0-ubuntu20.04-py38-cpu"
-    ),
+    name=deployment_name,
+    endpoint_name=endpoint_name,
+    model="iris-model:latest",
+    environment=env,
     code_configuration=CodeConfiguration(
-        code=".",
+        code="./",
         scoring_script="score.py"
     ),
-    instance_type="Standard_DS3_v2",
-    instance_count=1
+    instance_type="Standard_DS2_v2",
+    instance_count=1,
 )
 
-ml_client.begin_create_or_update(deployment).wait()
+ml_client.online_deployments.begin_create_or_update(deployment).result()
 
-# IMPORTANT — route traffic
-endpoint = ml_client.online_endpoints.get("rhp-iris-endpoint")
-endpoint.traffic = {"blue": 100}
-ml_client.begin_create_or_update(endpoint).wait()
+# Set traffic
+ml_client.online_endpoints.begin_update(
+    ManagedOnlineEndpoint(
+        name=endpoint_name,
+        traffic={"blue": 100}
+    )
+).result()
+
+print("Deployment successful!")
