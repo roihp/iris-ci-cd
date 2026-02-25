@@ -31,7 +31,7 @@ ml_client.begin_create_or_update(endpoint).wait()
 # Deployment
 deployment = ManagedOnlineDeployment(
     name="blue",
-    endpoint_name="iris-endpoint",
+    endpoint_name="rhp-iris-endpoint",
     model=model,
     environment=Environment(
         conda_file="conda.yaml",
