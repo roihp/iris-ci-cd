@@ -18,7 +18,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Set Azure credentials for Python
-      run: echo "AZURE_CREDENTIALS=${{ secrets.AZURE_CREDENTIALS }}" >> $GITHUB_ENV
+      run: echo "AZURE_CREDENTIALS='${{ secrets.AZURE_CREDENTIALS }}'" >> $GITHUB_ENV
 
     - name: Install Python
       uses: actions/setup-python@v4
