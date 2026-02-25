@@ -22,7 +22,7 @@ model = ml_client.models.create_or_update(
 
 # Create endpoint
 endpoint = ManagedOnlineEndpoint(
-    name="iris-endpoint",
+    name="rhp-iris-endpoint",
     auth_mode="key"
 )
 
