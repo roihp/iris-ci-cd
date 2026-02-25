@@ -3,7 +3,16 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.ml.entities import ManagedOnlineEndpoint, ManagedOnlineDeployment
 from azure.ai.ml.entities import Model, Environment, CodeConfiguration
 
-credential = DefaultAzureCredential()
+# credential = DefaultAzureCredential()
+
+# Load GitHub secret directly
+creds = json.loads(os.environ["AZURE_CREDENTIALS"])
+
+credential = ClientSecretCredential(
+    tenant_id=creds["tenantId"],
+    client_id=creds["clientId"],
+    client_secret=creds["clientSecret"]
+)
 
 ml_client = MLClient(
     credential,
