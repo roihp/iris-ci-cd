@@ -25,9 +25,9 @@ def get_ml_client():
 
     ml_client = MLClient(
         credential=credential,
-        subscription_id=os.environ["691cbb21-a34e-4990-99a9-4bb74b409c18"],
-        resource_group_name=os.environ["rhp-ml-rg2"],
-        workspace_name=os.environ["rhp-ml-workspace2"],
+        subscription_id=os.environ["AZURE_SUBSCRIPTION_ID"],
+        resource_group_name=os.environ["AZURE_RESOURCE_GROUP"],
+        workspace_name=os.environ["AZURE_WORKSPACE_NAME"]
     )
 
     return ml_client
