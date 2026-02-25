@@ -8,6 +8,7 @@ on:
 jobs:
   train-and-deploy:
     runs-on: ubuntu-latest
+    environment: IRIS_ENVIRONMENT
 
     steps:
       - name: Checkout repository
@@ -30,6 +31,10 @@ jobs:
       - name: Train Model
         run: |
           python train.py
+          env:
+            AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+            AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+            AZURE_WORKSPACE_NAME: ${{ secrets.AZURE_WORKSPACE_NAME }}
 
       - name: Deploy Model
         run: |
