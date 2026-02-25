@@ -22,30 +22,20 @@ model = ml_client.models.create_or_update(
 
 # Create endpoint
 endpoint = ManagedOnlineEndpoint(
-    name="rhp-iris-endpoint",
+    name="iris-endpoint",
     auth_mode="key"
 )
-
-#endpoint_name = "rhp-iris-endpoint"
-
-# Delete if exists (including failed state)
-# try:
-#    print("Deleting existing endpoint if it exists...")
-#    ml_client.online_endpoints.begin_delete(endpoint_name).wait()
-#    print("Old endpoint deleted.")
-# except ResourceNotFoundError:
-#    print("No existing endpoint found.")
 
 ml_client.begin_create_or_update(endpoint).wait()
 
 # Deployment
 deployment = ManagedOnlineDeployment(
     name="blue",
-    endpoint_name="rhp-iris-endpoint",
+    endpoint_name="iris-endpoint",
     model=model,
     environment=Environment(
         conda_file="conda.yaml",
-        image="mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04"
+        image="mcr.microsoft.com/azureml/sklearn-1.0-ubuntu20.04-py38-cpu"
     ),
     code_configuration=CodeConfiguration(
         code=".",
@@ -56,3 +46,8 @@ deployment = ManagedOnlineDeployment(
 )
 
 ml_client.begin_create_or_update(deployment).wait()
+
+# IMPORTANT — route traffic
+endpoint = ml_client.online_endpoints.get("iris-endpoint")
+endpoint.traffic = {"blue": 100}
+ml_client.begin_create_or_update(endpoint).wait()
