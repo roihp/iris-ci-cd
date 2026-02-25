@@ -7,9 +7,9 @@ credential = DefaultAzureCredential()
 
 ml_client = MLClient(
     credential,
-    "SUBSCRIPTION_ID",
-    "RESOURCE_GROUP",
-    "WORKSPACE_NAME",
+    "691cbb21-a34e-4990-99a9-4bb74b409c18",
+    "rhp-ml-rg2",
+    "rhp-ml-workspace2",
 )
 
 # Register model
