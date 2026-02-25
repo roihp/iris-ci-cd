@@ -27,6 +27,12 @@ jobs:
     - name: Train Model
       run: python train.py
 
+    - name: Show Azure Account
+      run: az account show
+    
+    - name: List Subscriptions
+      run: az account list --output table
+
     - name: Deploy Model
       run: python deploy.py
 
