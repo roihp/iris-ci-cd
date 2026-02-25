@@ -8,7 +8,7 @@ from azure.ai.ml.entities import Model, Environment, CodeConfiguration
 # credential = DefaultAzureCredential()
 
 # Load GitHub secret directly
-creds = json.loads(os.environ["AZURE_CREDENTIALS"])
+creds = json.loads(base64.b64decode(os.environ["AZURE_CREDENTIALS_BASE64"]))
 
 credential = ClientSecretCredential(
     tenant_id=creds["tenantId"],
