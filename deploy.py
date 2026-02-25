@@ -22,7 +22,7 @@ model = ml_client.models.create_or_update(
 
 # Create endpoint
 endpoint = ManagedOnlineEndpoint(
-    name="iris-endpoint",
+    name="rhp-iris-endpoint",
     auth_mode="key"
 )
 
@@ -31,7 +31,7 @@ ml_client.begin_create_or_update(endpoint).wait()
 # Deployment
 deployment = ManagedOnlineDeployment(
     name="blue",
-    endpoint_name="iris-endpoint",
+    endpoint_name="rhp-iris-endpoint",
     model=model,
     environment=Environment(
         conda_file="conda.yaml",
@@ -48,6 +48,6 @@ deployment = ManagedOnlineDeployment(
 ml_client.begin_create_or_update(deployment).wait()
 
 # IMPORTANT — route traffic
-endpoint = ml_client.online_endpoints.get("iris-endpoint")
+endpoint = ml_client.online_endpoints.get("rhp-iris-endpoint")
 endpoint.traffic = {"blue": 100}
 ml_client.begin_create_or_update(endpoint).wait()
