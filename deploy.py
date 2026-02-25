@@ -56,4 +56,3 @@ deployment = ManagedOnlineDeployment(
 )
 
 ml_client.begin_create_or_update(deployment).wait()
-
