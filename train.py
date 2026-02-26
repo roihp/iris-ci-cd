@@ -85,11 +85,15 @@ def register_model(model_path, model_name):
         path=model_path,
         name=model_name,
         description="Iris classification model",
-        type="custom_model",
-        labels={"latest": "true"}
+        type="custom_model"
     )
 
     registered_model = ml_client.models.create_or_update(model)
+    ml_client.models.update(
+        name=model_name,
+        version=registered_model.version,
+        labels={"latest": "true"}
+    )
 
     print("Model registered successfully!")
 
