@@ -39,11 +39,18 @@ env = Environment(
 
 ml_client.environments.create_or_update(env)
 
+# --- 2. Get the latest version of the registered model ---
+model_name = "iris-model" # Replace with your model name
+# List models and order by version descending to get the latest
+latest_model_version = next(ml_client.models.list(name=model_name, list_asset_version=True))
+model = ml_client.models.get(name=model_name, version=latest_model_version.version)
+print(f"Latest model version found: {model.version}")
+
 # Create deployment
 deployment = ManagedOnlineDeployment(
     name=deployment_name,
     endpoint_name=endpoint_name,
-    model="iris-model:latest",
+    model=model,
     environment=env,
     code_configuration=CodeConfiguration(
         code="./",
