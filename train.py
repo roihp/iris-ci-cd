@@ -89,11 +89,6 @@ def register_model(model_path, model_name):
     )
 
     registered_model = ml_client.models.create_or_update(model)
-    ml_client.models.update(
-        name=model_name,
-        version=registered_model.version,
-        labels={"latest": "true"}
-    )
 
     print("Model registered successfully!")
 
