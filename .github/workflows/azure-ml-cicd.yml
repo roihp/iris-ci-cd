@@ -28,6 +28,11 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Show Azure Account
+        run: |
+          az account show
+          az account list --output table
+
       - name: Train Model
         run: |
           python train.py
