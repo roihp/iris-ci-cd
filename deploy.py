@@ -39,14 +39,11 @@ env = Environment(
 
 ml_client.environments.create_or_update(env)
 
-model_name = "iris-model"
-model = ml_client.models.get(name=model_name, label="latest")  # None = latest
-
 # Create deployment
 deployment = ManagedOnlineDeployment(
     name=deployment_name,
     endpoint_name=endpoint_name,
-    model=f"{model.name}:{model.version}",
+    model="iris-model:latest",
     environment=env,
     code_configuration=CodeConfiguration(
         code="./",
