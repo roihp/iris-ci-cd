@@ -62,11 +62,7 @@ deployment = ManagedOnlineDeployment(
 ml_client.online_deployments.begin_create_or_update(deployment).result()
 
 # Set traffic
-ml_client.online_endpoints.begin_update(
-    ManagedOnlineEndpoint(
-        name=endpoint_name,
-        traffic={"blue": 100}
-    )
-).result()
+endpoint.traffic = {"blue": 100}
+ml_client.online_endpoints.begin_create_or_update(endpoint).result()
 
 print("Deployment successful!")
